@@ -111,7 +111,7 @@ Roaming mitigations:
 <v-clicks>
 
 - Started out as "gQUIC" at Google
-- Standardized as "QUIC" by the IETF in RFC 9000
+- Standardized as "QUIC" by the IETF in RFC 9000 (May 2021)
 - Built on UDP
 
 ```rust
@@ -125,7 +125,7 @@ let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 - retransmission & congestion control
 - many streams (no head of line blocking!)
 - encryption
-- connection migration(!)
+- connection migration
 
 </v-clicks>
 
@@ -202,7 +202,7 @@ $ ip addr show
 
 ---
 
-# NATs
+# NAT
 
 <SceneNat />
 
@@ -222,7 +222,7 @@ $ ip addr show
 
 ---
 
-# NATs
+# NAT
 
 <SceneNatMapping />
 
