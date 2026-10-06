@@ -149,8 +149,6 @@ let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 
 What about my own server at home?
 
-<div class="fw-desktop-image">
-
 ![Image of Framework Desktop](./fw.jpg)
 
 </div>
@@ -456,12 +454,13 @@ let (mut send, mut recv) = connection.open_bi().await?;
 
 # Cool, what can we do with this?
 
-- Connect any two computers in the world — and *keep* the connections alive
+- Connect (almost) all internet-connected computers in the world!
 - Relays are cheap to operate
   - 95–98% of bytes between endpoints end up being sent directly
 - Relays are identified by URL
   - self-host them!
-  - endpoints can even discover each other's relay URL and connect there
+  - discover relay URLs you didn't know about and just connect
+- Relays are optional if you're on the same network
 
 <!--
 - so to wrap up the "how":
@@ -477,11 +476,6 @@ let (mut send, mut recv) = connection.open_bi().await?;
 
 # Demo
 
-```
-$ ssh home
-Last login: … from anywhere
-```
-
 <!--
 - Show I've set up "pigeons" on my machine
 - Show `~/.ssh/config`
@@ -490,17 +484,23 @@ Last login: … from anywhere
 
 ---
 
-# Other things
+<div class="centered-image">
 
-- Raspberry Pi camera feed — live at RustConf
-- Mesh-LLM — inference spread across machines
-- A game from `#showcase`, built this year
+![iroh live cam](./iroh-live-cam.jpg)
+
+</div>
 
 <!--
-- Images from RustConf this year with raspberry Pi camera feed
-- Show Mesh-LLM project
-- Show recent game posted in `#showcase`
+- Image from RustConf this year with raspberry Pi camera feed
 -->
+
+---
+
+# [meshllm](https://meshllm.cloud/)
+
+---
+
+[![Starworn image](./starworn.png)](https://starworn.net)
 
 ---
 
@@ -508,11 +508,12 @@ Last login: … from anywhere
 
 - Hope you enjoyed this journey through NATs and firewalls
 - We have QUIC at home 🏠
-- See you in discord! `iroh.computer/discord`
-- `iroh.computer` for more info — eager to see what you build with it!
+- See you in discord! [iroh.computer/discord](https://iroh.computer/discord)
+- [iroh.computer](https://iroh.computer) for docs, a blog and more
+- eager to see what you build with it!
 
 <!--
-- thanks for your attention!
+- thanks folks!
 - iroh.computer/discord if you want to hang out, ask questions, or show off what you built
 - iroh.computer/docs for all of this in written form
 -->
