@@ -1,56 +1,44 @@
 ---
 theme: ./theme
 title: We have QUIC at home
-subtitle: How iroh connects devices peer-to-peer — and keeps them connected
+subtitle: How iroh connects devices peer-to-peer
 colorSchema: light
-transition: fade
+# transition: fade
 drawings: false
 layout: cover
 ---
 
 # We have QUIC at home
 
-How iroh connects devices peer-to-peer — and keeps them connected
+How iroh connects devices peer-to-peer
 
-Philipp Pohl-Krüger · @matheus23.com · number0.computer
-
-<!--
-- Hi, I'm Philipp, this is "We have QUIC at home"
-- 40 minutes: how peer-to-peer connections work, survive, and get established
-  even when networks actively try to prevent them
-- Buckle up: it's a journey from a broken TCP connection to hole-punching over relays
--->
-
----
-
-# Intro
-
-- Hi, I'm Philipp Pohl-Krüger ✌️ (@matheus23.com on bluesky)
-- I work for number0.computer — we make iroh.computer
-- We're folks with backgrounds in “distributed web stuff working”
+Philipp Pohl-Krüger · @matheus23.com · [n0.computer](https://n0.computer)
 
 <!--
-- I'm Philipp - work at number 0, we make iroh
-- number 0: largely from similar background trying to get distributed web stuff working
-- quest to get peer-to-peer to work well since founding
-- initially focused on other things besides connections
-- built IPFS implementation back then!
-- realized we needed to focus on mostly one thing:
-- establishing and keeping a good connection between any two devices.
+Show of hands: Who's written a program that connects two devices at home?
+Maybe a multiplayer game?
+Maybe sth to remote-control?
+How did that go?
 -->
 
 ---
 
 # Computers talking to each other
 
+<v-clicks>
+
 ```rust
-let connection = TcpStream::connect("<IP address>".parse()?).await?;
+use tokio::net::TcpStream;
+
+let connection = TcpStream::connect("<IP address>:<port>").await?;
 ```
 
 - yay streaming!
 - yay bidirectional!
 - yay reliable!
 - yay congestion controlled!
+
+</v-clicks>
 
 <!--
 - So you want to talk to another computer. We do this all the time!

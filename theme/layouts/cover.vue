@@ -14,7 +14,7 @@ const style = computed(() => handleBackground(props.background, true))
 <template>
   <div class="slidev-layout cover" :style="style">
     <div class="iroh-glow" />
-    <svg class="iroh-net" viewBox="0 0 980 620" fill="none">
+    <!-- <svg class="iroh-net" viewBox="0 0 980 620" fill="none">
       <g stroke="#8b87ff" stroke-opacity="0.28" stroke-width="1">
         <line x1="120" y1="120" x2="340" y2="60" />
         <line x1="120" y1="120" x2="80" y2="330" />
@@ -40,13 +40,13 @@ const style = computed(() => handleBackground(props.background, true))
         <circle cx="700" cy="450" r="3" fill-opacity="0.35" />
         <circle cx="915" cy="430" r="2.5" fill-opacity="0.35" />
       </g>
-    </svg>
+    </svg> -->
     <div class="my-auto w-full relative z-1">
       <slot />
     </div>
-    <div class="iroh-wordmark">
+    <!-- <div class="iroh-wordmark">
       <span class="dot" /> number0 · iroh.computer
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -65,7 +65,7 @@ const style = computed(() => handleBackground(props.background, true))
   transform: translateX(-50%);
   width: 120rem;
   height: 90rem;
-  background: radial-gradient(closest-side, rgba(98, 87, 247, 0.55), rgba(98, 87, 247, 0));
+  /*background: radial-gradient(closest-side, rgba(98, 87, 247, 0.55), rgba(98, 87, 247, 0));*/
   pointer-events: none;
 }
 

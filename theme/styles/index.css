@@ -1,17 +1,11 @@
 :root {
-  /* brand */
   --slidev-theme-primary: #6257f7;
-  --iroh-ink: #18181b;
-  --iroh-dim: #71717a;
-  --iroh-faint: #a1a1aa;
-  --iroh-hairline: #e4e4e7;
-  --iroh-paper: #fdfdfe;
-  --iroh-indigo: #6366f1;
-  --iroh-blue: #2563eb;
-  --iroh-green: #16a34a;
-  --iroh-amber: #d97706;
-  --iroh-red: #dc2626;
-  --iroh-lime: #dbff75;
+  --ink: #18181b;
+  --dim: #71717a;
+  --faint: #a1a1aa;
+  --hairline: #e4e4e7;
+  --paper: #fdfdfe;
+  --iroh-indigo: #6257F7;
 
   --slidev-clicks-color: #9ca3af;
 }
@@ -23,10 +17,9 @@ body {
 
 .slidev-layout {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  color: var(--iroh-ink);
-  background: var(--iroh-paper);
+  color: var(--ink);
+  background: var(--paper);
   font-weight: 400;
-  letter-spacing: -0.005em;
 }
 
 /* ---------- typography ---------- */
@@ -35,8 +28,6 @@ body {
 .slidev-layout h2,
 .slidev-layout h3 {
   font-weight: 650;
-  letter-spacing: -0.022em;
-  line-height: 1.1;
 }
 
 .slidev-layout h1 {
@@ -46,18 +37,18 @@ body {
 
 .slidev-layout h1 + p {
   font-family: 'Space Mono', ui-monospace, monospace;
-  font-size: 0.82em;
-  color: var(--iroh-dim);
+  /*font-size: 0.82rem;*/
+  color: var(--dim);
 }
 
 .slidev-layout strong {
   font-weight: 650;
-  color: var(--iroh-ink);
+  color: var(--ink);
 }
 
 .slidev-layout em {
   font-style: italic;
-  color: var(--iroh-dim);
+  color: var(--dim);
 }
 
 .slidev-layout a {
@@ -69,32 +60,29 @@ body {
 /* ---------- lists ---------- */
 
 .slidev-layout ul {
-  padding-left: 1.15em;
+  padding-left: 1.15rem;
 }
 
 .slidev-layout ul li {
-  margin: 0.5em 0;
-  line-height: 1.4;
 }
 
 .slidev-layout ul li::marker {
   color: var(--iroh-indigo);
-  font-size: 0.9em;
 }
 
 .slidev-layout ol {
-  padding-left: 1.3em;
+  padding-left: 1.3rem;
 }
 
 .slidev-layout ol li {
-  margin: 0.5em 0;
+  margin: 0.5rem 0;
   line-height: 1.4;
 }
 
 .slidev-layout ol li::marker {
   color: var(--iroh-indigo);
   font-family: 'Space Mono', ui-monospace, monospace;
-  font-size: 0.8em;
+  font-size: 0.8rem;
 }
 
 /* ---------- code ---------- */
@@ -102,20 +90,16 @@ body {
 .slidev-layout code {
   font-family: 'Space Mono', ui-monospace, monospace;
   background: #f4f4f8;
-  border: 1px solid var(--iroh-hairline);
-  border-radius: 0.25em;
-  padding: 0.05em 0.35em;
+  border: 1px solid var(--hairline);
+  border-radius: 0.25rem;
   color: #4338ca;
-  font-size: 0.88em;
 }
 
 .slidev-layout pre {
+  margin: 1.5rem 0.5rem;
   background: #f6f7fb;
-  border: 1px solid var(--iroh-hairline);
-  border-radius: 0.65em;
-  padding: 0.85em 1.15em;
-  font-size: 0.78em;
-  line-height: 1.6;
+  border: 1px solid var(--hairline);
+  border-radius: 0.65rem;
 }
 
 .slidev-layout pre code {
@@ -123,7 +107,7 @@ body {
   border: none;
   padding: 0;
   color: inherit;
-  font-size: inherit;
+  font-size: 1.05rem;
 }
 
 /* ---------- helpers used in slides.md ---------- */
@@ -131,12 +115,12 @@ body {
 .mono-dim {
   display: block;
   font-family: 'Space Mono', ui-monospace, monospace;
-  font-size: 0.78em;
-  color: var(--iroh-faint);
-  margin-top: 0.25em;
+  font-size: 0.78rem;
+  color: var(--faint);
+  margin-top: 0.25rem;
 }
 
-/* ---------- diagram slides: give the stage maximum room ---------- */
+/* ---------- diagram slides ---------- */
 
 .slidev-layout.diagram {
   display: flex;
@@ -169,14 +153,11 @@ body {
   font-size: 3.6rem;
   font-weight: 700;
   color: #fff;
-  letter-spacing: -0.03em;
 }
 
 .slidev-layout.cover h1 + p {
   font-family: 'Space Mono', ui-monospace, monospace;
   color: #a5a3ff;
-  font-size: 0.95rem;
-  margin-top: 0.4rem;
 }
 
 .slidev-layout.cover p {
@@ -187,8 +168,8 @@ body {
 
 .slidev-slide-number {
   font-family: 'Space Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
-  color: var(--iroh-faint);
+  /*font-size: 0.72rem;*/
+  color: var(--faint);
 }
 
 ::selection {
