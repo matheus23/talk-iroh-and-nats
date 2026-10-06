@@ -115,6 +115,9 @@ Roaming mitigations:
 - Built on UDP
 
 ```rust
+use noq::Endpoint;
+
+let endpoint = Endpoint::client("[::]:0".parse()?)?;
 let connection = endpoint.connect(addr, "example.com").await?;
 let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 ```
@@ -129,7 +132,7 @@ let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 <!--
 - Don't reinvent the wheel - once upon a time Google already did the work of building upon UDP, back then they called it "SPDY" ("speedy")
 	- They took it to the IETF to get it standardized and that turned into QUIC with a lot of work from others who also adopted it
-- You call `Endpoint::connect` with an IP addr and port
+- You call `endpoint.connect` with an IP addr and port
 - You get a `Connection`, and on that can call `Connection::open_bi` to get as many tcp-like "bidirectional streams" as you want. It's great!
 - QUIC can prefix all your datagrams with a "connection ID" so it can survive changes to your four-tuple!
 	- This is called "connection migration" and it's really really useful!
@@ -174,8 +177,8 @@ What about my own server at home?
 <v-clicks>
 
 ```rust
-let endpoint = Endpoint::bind("0.0.0.0:0")?;
-endpoint.local_addr()?; // uuh 0.0.0.0:12345
+let endpoint = Endpoint::client("[::]:0".parse()?)?;
+endpoint.local_addr()?; // uuh [::]:12345
 ```
 
 ```bash
@@ -190,8 +193,8 @@ $ ip addr show
 
 <!--
 - When we ran our server at home, which address did we use?
-- Say we called `Endpoint::bind(0.0.0.0:0)`, which means "listen on any local interface, allow network traffic" (as opposed to e.g. `Endpoint::bind(127.0.0.1)`.)
-	- Then asking `Endpoint::local_addr` gives you `0.0.0.0:12345`, which is not helpful. But hey at least we got the actual port!
+- Say we called `Endpoint::client([::]:0)`, which means "listen on any local interface, allow network traffic" (as opposed to e.g. `Endpoint::client(127.0.0.1)`.)
+	- Then asking `Endpoint::local_addr` gives you `[::]:12345`, which is not helpful. But hey at least we got the actual port!
 	- `ip addr show` gives you the IP addresses of your interfaces... maybe look at the Wifi one? It shows `192.168.1.101`. This is what connecting to worked for at home.
 		- As many of you probably know, the `192.168.*.*` prefix is common net prefix for home networks.
 	- But it's not the global address!
@@ -254,24 +257,44 @@ $ ip addr show
 
 # Talking to another computer with iroh
 
-Same API: `Endpoint::connect(...)`
+<v-clicks>
 
-But two questions remain:
+```rust
+use iroh::Endpoint;
 
-- **who** do we want to talk to?
-- how do we find out **where** they are?
+let endpoint = Endpoint::bind(iroh::presets::N0).await?;
+let connection = endpoint.connect(...).await?;
+let (mut send, mut recv) = connection.open_bi().await?;
+```
+
+- standard QUIC API
+- Except: How do we address another device?
+
+</v-clicks>
 
 <!--
 - in light of all of this, how does iroh make it possible to talk to another computer?
 - First, let's be modern and use QUIC
-- So it's `Endpoint::connect`
+- So it's `endpoint.connect`
 -->
 
 ---
 
 # Identifying another device
 
-<SceneIdentity />
+<v-clicks depth="2">
+
+- `endpoint.connect("192.168.1.101:12345")`
+  - 😕 only works locally, can change
+  - 😕 unclear how to do authentication
+- `endpoint.connect("device.name.example.com")`
+  - 😕 requires central coordination for handing out names
+- iroh: `endpoint.connect(<Ed25519 public key>)`
+  - collisions impossibly unlikely
+  - can be generated without internet access
+  - public key can be used for authenticated encryption
+
+</v-clicks>
 
 <!--
 - first: how do we identify the other side?
@@ -279,31 +302,53 @@ But two questions remain:
 	- if we use a name e.g. domain name, we need a central registry to ensure we don't accidentally re-use the same name when one side is offline
 	- we want to work, even if WAN is unavailable, but LAN allows connecting two nodes.
 	- so we use a public key to identify another device!
-- `Endpoint::connect(<public key>)`
+- `endpoint.connect(<public key>)`
 	- we call these "Endpoint ID"
 	- are just Ed25519 public keys, usually hex-encoded
 	- works in a network split
 	- gives us authenticated encryption, too
-	- figuring out the name to talk to another device is difficult. you can't expect a human to memorize it. It's very application-dependent. Some cases:
-		- scan via QR code
-		- TOFU via local-only (e.g. bluetooth/mDNS/nfc)
-		- central registry for your app (database with user account to devices EndpointId mappings)
-			- could also use something like the AT protocol(!)
+-->
+
+---
+
+# Identifying another device
+
+- iroh: `endpoint.connect(<Ed25519 public key>)`
+  - collisions impossibly unlikely
+  - can be generated without internet access
+  - public key can be used for authenticated encryption
+  - 😕 not memorable, solutions are application-specific:
+    <ul>
+      <li v-click>scan via QR code</li>
+      <li v-click>trust-on-first-use (TOFU) when exchanged locally: mDNS/bluetooth/NFC</li>
+      <li v-click>central registry for your app, cache locally for offline use</li>
+      <li v-click>could use AT protocol!</li>
+    </ul>
+
+<!--
+- figuring out the name to talk to another device is difficult. you can't expect a human to memorize it. It's very application-dependent. Some cases:
+	- scan via QR code
+	- TOFU via local-only (e.g. bluetooth/mDNS/nfc)
+	- central registry for your app (database with user account to devices EndpointId mappings)
+		- could also use something like the AT protocol(!)
 -->
 
 ---
 
 # Sending “to a public key”
 
-- Resolve `EndpointId` to IP address candidates via `AddressLookup`
-  - a pluggable trait for finding addressing information
-  - central server publishing *signed* address records (most popular)
-  - mDNS gossiping addresses in the LAN
-  - gossip protocol among currently connected peers
-  - anything: bluetooth, LoRa, unix domain sockets
-- Send the first datagram to all (or the best few) candidates at once!
-  - duplicates of the first packet, sent to different IPs
-  - the first answer becomes the first “remote address”
+<v-clicks depth=3>
+
+- Resolve `EndpointId` to address candidates
+  - candidates are records usually *signed by the `EndpointId`*
+  - `AddressLookup`: pluggable trait
+    - central server publishing address records (most popular)
+    - mDNS gossiping addresses in LAN
+    - gossip protocol among currently connected peers
+    - anything: bluetooth, LoRa, unix domain sockets, ...
+- Then send the first datagram to all candidates at once
+
+</v-clicks>
 
 <!--
 - still need to actually send UDP packets. That means IP addresses

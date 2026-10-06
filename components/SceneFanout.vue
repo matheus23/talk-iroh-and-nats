@@ -32,7 +32,7 @@ const probe2 = 'M 688 256 C 560 312, 430 316, 324 288'
     <g v-click="1">
       <NetBubble
         :x="536" :y="112" :w="256" :h="86" tail="right"
-        color="#15803d" tint="#f0fdf4" title="connect(the laptop)"
+        color="#15803d" tint="#f0fdf4" title="endpoint.connect(the laptop)"
         :lines="['lookup gives candidates:', 'IP 1   192.168.1.101:12345', 'IP 2   203.0.113.20:6543']"
       />
       <NetIpChip :x="560" :y="218" color="#2563eb" tint="#eff6ff" label="IP 1" caption="LAN" />
