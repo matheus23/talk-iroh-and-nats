@@ -15,9 +15,8 @@ const wfdArc = 'M 344 290 C 420 350, 540 350, 598 292'
 
 <template>
   <Stage>
-    <NetLaptop :x="laptop.x" :y="laptop.y" label="laptop" />
-    <NetPhone :x="phone.x" :y="phone.y" color="#16a34a" label="phone" label-color="#15803d" />
-    <text v-click.hide="2" x="470" y="420" text-anchor="middle" style="font-size:10.5px" fill="#a1a1aa">no router, no tower, no relay</text>
+    <NetLaptop :x="laptop.x" :y="laptop.y" />
+    <NetPhone :x="phone.x" :y="phone.y" color="#16a34a" label-color="#15803d" />
 
     <!-- step 1: bluetooth bootstrap -->
     <g v-click="1">
@@ -52,7 +51,7 @@ const wfdArc = 'M 344 290 C 420 350, 540 350, 598 292'
       <NetBubble
         :x="316" :y="60" :w="308" :h="66" tail="none"
         color="#d97706" tint="#fff7ed" title="experimental territory"
-        :lines="['not in the official crates (yet)', 'a direct bluetooth custom transport exists!']"
+        :lines="['needs iroh changes for link-local support', 'a direct bluetooth custom transport exists!']"
       />
     </g>
   </Stage>
