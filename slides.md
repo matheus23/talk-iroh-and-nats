@@ -216,7 +216,7 @@ $ ip addr show
 
 ---
 
-# NATs — it depends
+# NATs: EIM vs. A(P)DM
 
 <SceneNatMapping />
 
