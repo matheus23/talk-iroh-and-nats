@@ -1,0 +1,21 @@
+{
+  "name": "slidev-theme-iroh",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An iroh-flavoured Slidev theme: Space Grotesk type, light line-art canvas, indigo primary",
+  "keywords": [
+    "slidev-theme",
+    "slidev"
+  ],
+  "license": "MIT",
+  "slidev": {
+    "colorSchema": "light",
+    "defaults": {
+      "fonts": {
+        "sans": "Space Grotesk",
+        "mono": "Space Mono",
+        "webfonts": false
+      }
+    }
+  }
+}

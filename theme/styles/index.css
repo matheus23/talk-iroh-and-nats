@@ -1,0 +1,196 @@
+:root {
+  /* brand */
+  --slidev-theme-primary: #6257f7;
+  --iroh-ink: #18181b;
+  --iroh-dim: #71717a;
+  --iroh-faint: #a1a1aa;
+  --iroh-hairline: #e4e4e7;
+  --iroh-paper: #fdfdfe;
+  --iroh-indigo: #6366f1;
+  --iroh-blue: #2563eb;
+  --iroh-green: #16a34a;
+  --iroh-amber: #d97706;
+  --iroh-red: #dc2626;
+  --iroh-lime: #dbff75;
+
+  --slidev-clicks-color: #9ca3af;
+}
+
+html,
+body {
+  background: #e9e9ee;
+}
+
+.slidev-layout {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  color: var(--iroh-ink);
+  background: var(--iroh-paper);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+/* ---------- typography ---------- */
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  font-weight: 650;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+}
+
+.slidev-layout h1 {
+  font-size: 2.55rem;
+  margin-bottom: 0.9rem;
+}
+
+.slidev-layout h1 + p {
+  font-family: 'Space Mono', ui-monospace, monospace;
+  font-size: 0.82em;
+  color: var(--iroh-dim);
+}
+
+.slidev-layout strong {
+  font-weight: 650;
+  color: var(--iroh-ink);
+}
+
+.slidev-layout em {
+  font-style: italic;
+  color: var(--iroh-dim);
+}
+
+.slidev-layout a {
+  color: var(--slidev-theme-primary);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--slidev-theme-primary) 40%, transparent);
+}
+
+/* ---------- lists ---------- */
+
+.slidev-layout ul {
+  padding-left: 1.15em;
+}
+
+.slidev-layout ul li {
+  margin: 0.5em 0;
+  line-height: 1.4;
+}
+
+.slidev-layout ul li::marker {
+  color: var(--iroh-indigo);
+  font-size: 0.9em;
+}
+
+.slidev-layout ol {
+  padding-left: 1.3em;
+}
+
+.slidev-layout ol li {
+  margin: 0.5em 0;
+  line-height: 1.4;
+}
+
+.slidev-layout ol li::marker {
+  color: var(--iroh-indigo);
+  font-family: 'Space Mono', ui-monospace, monospace;
+  font-size: 0.8em;
+}
+
+/* ---------- code ---------- */
+
+.slidev-layout code {
+  font-family: 'Space Mono', ui-monospace, monospace;
+  background: #f4f4f8;
+  border: 1px solid var(--iroh-hairline);
+  border-radius: 0.25em;
+  padding: 0.05em 0.35em;
+  color: #4338ca;
+  font-size: 0.88em;
+}
+
+.slidev-layout pre {
+  background: #f6f7fb;
+  border: 1px solid var(--iroh-hairline);
+  border-radius: 0.65em;
+  padding: 0.85em 1.15em;
+  font-size: 0.78em;
+  line-height: 1.6;
+}
+
+.slidev-layout pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* ---------- helpers used in slides.md ---------- */
+
+.mono-dim {
+  display: block;
+  font-family: 'Space Mono', ui-monospace, monospace;
+  font-size: 0.78em;
+  color: var(--iroh-faint);
+  margin-top: 0.25em;
+}
+
+/* ---------- diagram slides: give the stage maximum room ---------- */
+
+.slidev-layout.diagram {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem 1.2rem;
+}
+
+.slidev-layout.diagram h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+  flex: none;
+}
+
+.slidev-layout.diagram svg {
+  width: 100%;
+  height: auto;
+  flex: 1;
+  min-height: 0;
+  object-fit: contain;
+}
+
+/* ---------- cover ---------- */
+
+.slidev-layout.cover {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  color: #fff;
+}
+
+.slidev-layout.cover h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.slidev-layout.cover h1 + p {
+  font-family: 'Space Mono', ui-monospace, monospace;
+  color: #a5a3ff;
+  font-size: 0.95rem;
+  margin-top: 0.4rem;
+}
+
+.slidev-layout.cover p {
+  color: #d4d3ff;
+}
+
+/* ---------- chrome ---------- */
+
+.slidev-slide-number {
+  font-family: 'Space Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--iroh-faint);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--slidev-theme-primary) 25%, transparent);
+}

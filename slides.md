@@ -1,14 +1,33 @@
 ---
-theme: default
+theme: ./theme
 title: We have QUIC at home
+subtitle: How iroh connects devices peer-to-peer — and keeps them connected
+colorSchema: light
+transition: fade
 drawings: false
+layout: cover
 ---
 
-## Intro
+# We have QUIC at home
 
-- Hi I'm Philipp Pohl-Krüger ✌️ (@matheus23.com on bluesky)
-- I work for number0.computer - we make iroh.computer
-- we're folks with backgrounds in "distributed web stuff working"
+How iroh connects devices peer-to-peer — and keeps them connected
+
+Philipp Pohl-Krüger · @matheus23.com · number0.computer
+
+<!--
+- Hi, I'm Philipp, this is "We have QUIC at home"
+- 40 minutes: how peer-to-peer connections work, survive, and get established
+  even when networks actively try to prevent them
+- Buckle up: it's a journey from a broken TCP connection to hole-punching over relays
+-->
+
+---
+
+# Intro
+
+- Hi, I'm Philipp Pohl-Krüger ✌️ (@matheus23.com on bluesky)
+- I work for number0.computer — we make iroh.computer
+- We're folks with backgrounds in “distributed web stuff working”
 
 <!--
 - I'm Philipp - work at number 0, we make iroh
@@ -20,7 +39,9 @@ drawings: false
 - establishing and keeping a good connection between any two devices.
 -->
 
-## Computers talking to each other
+---
+
+# Computers talking to each other
 
 ```rust
 let connection = TcpStream::connect("<IP address>".parse()?).await?;
@@ -42,12 +63,13 @@ let connection = TcpStream::connect("<IP address>".parse()?).await?;
 - You're happy
 -->
 
-## Computers talking to each other?
+---
+class: diagram
+---
 
-- drawing of phone and server, and router and cellular tower
-- click: add connection via router
-- click: phone connects to cellular tower instead
-- old connection shown on the router, now broken
+# Computers talking to each other?
+
+<SceneMigration />
 
 <!--
 - Now, turns out you used your phone to connect to another computer
@@ -58,9 +80,19 @@ let connection = TcpStream::connect("<IP address>".parse()?).await?;
 - So what do we do?
 -->
 
-## Keeping alive connections
+---
 
-Notes:
+# Keeping connections alive
+
+- **Re-dial after you move**
+  notice the move → new TCP handshake → probably a new encryption handshake too
+  <span class="mono-dim">1–3 s hiccup — and which data even got through?</span>
+
+- **Or drop down to raw UDP**
+  no more reliability, deduplication, congestion control
+  <span class="mono-dim">(congestion control is famously its own research field)</span>
+
+<!--
 - We could re-dial another TCP connection on the phone, once we realize we moved
 	- need to figure out that we moved (this can be trickier than you'd think!)
 	- needs another TCP handshake
@@ -74,10 +106,22 @@ Notes:
 		- deduplication (realize some data was accidentally duplicated)
 		- congestion control (proactively *avoid* packet loss, make efficient use of resources)
 			- notoriously complex! very active research area, lots of exciting things happening all the time
+-->
 
-## Better adopt QUIC!
+---
 
-Notes:
+# Better: adopt QUIC!
+
+Built on UDP — Google did the work once (SPDY), the IETF standardized it as **QUIC**
+
+```rust
+let connection = endpoint.connect(addr, "my-alpn").await?;
+let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
+```
+
+Streams, reliability, congestion control, encryption — and datagrams are identified by a **connection ID**
+
+<!--
 - Don't reinvent the wheel - once upon a time Google already did the work of building upon UDP, back then they called it "SPDY" ("speedy")
 	- They took it to the IETF to get it standardized and that turned into QUIC with a lot of work from others who also adopted it
 - You call `Endpoint::connect` with an IP addr and port
@@ -85,10 +129,17 @@ Notes:
 - QUIC can prefix all your datagrams with a "connection ID" so it can survive changes to your four-tuple!
 	- This is called "connection migration" and it's really really useful!
 - Handles congestion control, retransmission, and even encryption for you!
+-->
 
-## Can we talk to any computer?
+---
 
-Notes:
+# Can we talk to *any* computer?
+
+“The cloud” really just means: *a public IP address with an open port*
+
+What about my own server — at home?
+
+<!--
 - Until now we've run our server "in the cloud"
 	- more like, "with a public IP address" and "with an open port configured in our firewall"
 - But what if I want to connect to my server at home?
@@ -99,24 +150,40 @@ Notes:
 - Let's say my phone is in my local network, the connection might even work!
 - But when I go touch grass again, my phone switches to cellular and the connection breaks. QUIC or not.
 	- That's due to NAT and firewalls.
+-->
 
-## Global addressing?
+---
 
-Notes:
+# Global addressing?
+
+```rust
+let endpoint = Endpoint::bind("0.0.0.0:0")?; // any interface, any port
+endpoint.local_addr()?;                       // 0.0.0.0:12345 — nice, but…
+```
+
+```bash
+$ ip addr show
+    inet 192.168.1.101/24 ... # the Wifi one. global? no.
+```
+
+<!--
 - When we ran our server at home, which address did we use?
 - Say we called `Endpoint::bind(0.0.0.0:0)`, which means "listen on any local interface, allow network traffic" (as opposed to e.g. `Endpoint::bind(127.0.0.1)`.)
 	- Then asking `Endpoint::local_addr` gives you `0.0.0.0:12345`, which is not helpful. But hey at least we got the actual port!
 	- `ip addr show` gives you the IP addresses of your interfaces... maybe look at the Wifi one? It shows `192.168.1.101`. This is what connecting to worked for at home.
 		- As many of you probably know, the `192.168.*.*` prefix is common net prefix for home networks.
 	- But it's not the global address!
+-->
 
-## NATs
+---
+class: diagram
+---
 
-- diagram with laptop, router, and 1.1.1.1 DNS server
-- packets going out & in etc.
-- show mapping table in the router
+# NATs
 
-Notes:
+<SceneNat />
+
+<!--
 - your device's address is not "globally unique" so to say
 	- (we're short on IPv4 addrs)
 	- Also allows for separating "global" from "local" access
@@ -128,60 +195,67 @@ Notes:
 - IP packet gets translated with src: 203.0.113.20:6543
 	- router remembers 203.0.113.20.6543 <-> 192.168.1.101:12345
 - once 1.1.1.1 answers, the IP packet gets translated "back" on the router
+-->
 
-## NATs
+---
+class: diagram
+---
 
-- clean version of previous diagram, with laptop, router and 1.1.1.1 DNS server
-- add the 8.8.8.8 DNS server to the diagram
-- another packet to the 8.8.8.8 server
-- show question mark in router table
+# NATs — it depends
 
-Notes:
+<SceneNatMapping />
+
+<!--
 - Question: if I later send to 8.8.8.8 from the same port, will that re-use the same port?
 	- IT DEPENDS :) but mostly yes.
 - There are two types of mapping:
 	- EIM: no matter the destination IP address, once a mapping exists for an internal address-and-port, it will be used for incoming traffic.
 	- ADM & APDM: mappings for local addresses exist for each outbound address
 	- (Also called "Full-Cone or symmetric NAT" respectively)
+-->
 
-## Firewalls
+---
+class: diagram
+---
 
-- same diagram as before, with both 1.1.1.1 and 8.8.8.8 on the slide
-- there's a mapping for 1.1.1.1 as before
-- now 8.8.8.8 sends a packet to the mapping for 1.1.1.1
-- show question mark at router
+# Firewalls
 
-Notes:
+<SceneFirewall />
+
+<!--
 - Let's say we've sent a packet to 1.1.1.1, but then it's 8.8.8.8 that answers to us for some reason. The router is using EIM. Does the router allow the packet through?
 	- Answer: IT DEPENDS! But mostly no.
 - Filtering could be off
 - or Address-Dependent-Filtering (ADF): 8.8.8.8 can't answer, but another port on 1.1.1.1 can
 - or Address-and-Port-Dependent-Filtering (APDF): neither 8.8.8.8 nor another port on 1.1.1.1 can answer. Only 1.1.1.1:53 can.
+-->
 
-## Talking to another computer with iroh
+---
 
-Notes:
+# Talking to another computer with iroh
+
+Same API: `Endpoint::connect(...)`
+
+But two questions remain:
+
+- **who** do we want to talk to?
+- how do we find out **where** they are?
+
+<!--
 - in light of all of this, how does iroh make it possible to talk to another computer?
 - First, let's be modern and use QUIC
 - So it's `Endpoint::connect`
+-->
 
-## Identifying another device
+---
+class: diagram
+---
 
-- First show `Endpoint::connect(<IP address>)`
-	- IP address is not unique!
-	- Address might change!
-	- -> Bad identifier for "a thing to talk to"
-- Second show `Endpoint::connect(device0.example.com)`
-	- Show a "network split"
-	- Show a central registry, unavailable to both (WAN connection broken)
-	- But the devices should be able to talk to each other still!
-- Then show `Endpoint::connect(<public key>)`
-	- Ed25519 public key, usually hex encoded
-	- Collisions are impossibly unlikely
-	- Doubles as key for authenticated encryption
-	- Finding the name can be difficult/app specific
+# Identifying another device
 
-Notes:
+<SceneIdentity />
+
+<!--
 - first: how do we identify the other side?
 	- we established that a single IP address might not be enough or even change!
 	- if we use a name e.g. domain name, we need a central registry to ensure we don't accidentally re-use the same name when one side is offline
@@ -197,43 +271,59 @@ Notes:
 		- TOFU via local-only (e.g. bluetooth/mDNS/nfc)
 		- central registry for your app (database with user account to devices EndpointId mappings)
 			- could also use something like the AT protocol(!)
+-->
 
-## Sending "to a public key"
+---
 
-- Resolve `EndpointId` to IP address "candidates" via `AddessLookup`
-	- Pluggable trait for finding addressing information
-- Various implementations:
-	- Central server publishing *signed* addressing records (most popular)
-	- mDNS gossiping addressing in LAN
-	- gossip protocol among currently connected peers
-	- anything: bluetooth, LoRa, unix domain sockets
-- Send to all (or best couple of) candidates at once!
-	- duplicate first datagram with different IPs
-	- first answering datagram becomes first "remote address"
+# Sending “to a public key”
 
-Notes:
+- Resolve `EndpointId` to IP address candidates via `AddressLookup`
+  - a pluggable trait for finding addressing information
+  - central server publishing *signed* address records (most popular)
+  - mDNS gossiping addresses in the LAN
+  - gossip protocol among currently connected peers
+  - anything: bluetooth, LoRa, unix domain sockets
+- Send the first datagram to all (or the best few) candidates at once!
+  - duplicates of the first packet, sent to different IPs
+  - the first answer becomes the first “remote address”
+
+<!--
 - still need to actually send UDP packets. That means IP addresses
-- 
+- so iroh resolves the EndpointId to candidate addresses through pluggable AddressLookup services
+	- most popular: a central server that publishes signed addressing records for endpoints
+	- in the LAN: mDNS, endpoints gossiping their own addresses
+	- or gossip among peers we're already connected to
+	- it's just a trait: bluetooth, LoRa, whatever your app has
+- and since we don't know which candidate will answer, the Initial datagram is duplicated to all candidates
+- whichever one answers first wins and becomes the first remote address
+-->
 
-## Still need to deal with Firewalls
+---
+class: diagram
+---
 
-- diagram of phone, laptop, router & cellular tower
-	- phone is connected to cellular tower, laptop to router
-- phone shows `Endpoint::connect(<laptop EndpointId>)`
-- one UDP datgram, sent to two destinations: 192.168.1.101:12345 and 203.0.113.20:6543
-	- cellular tower rejects 192.* (no route)
-	- router rejects 203.* (firewall closed)
+# Still need to deal with firewalls
 
-Notes:
-- 
+<SceneFanout />
 
-## Relays!
+<!--
+- now the phone dials the laptop's EndpointId
+- address lookup gave us candidates: the laptop's LAN address, and its router's public address
+- iroh sends the first datagram to both at once
+- the cellular tower has no route to 192.168.*.* — that's private space
+- and the laptop's router drops the unsolicited incoming packet — firewall closed
+- so: candidate addresses alone get us nowhere. We need help.
+-->
 
-- same diagram as before, but now with relay.
-- phone and laptop show active connection to relay
-- highlight the established relay path
+---
+class: diagram
+---
 
-Notes:
+# Relays!
+
+<SceneRelay />
+
+<!--
 - we use relays to bootstrap these connections
 - relay connections are just HTTP 1.1 with websockets
 	- probably most reliable option for "any kind of connectivity" in the internet and various corporate environments, hotels, etc.
@@ -241,22 +331,17 @@ Notes:
 - relays are also how endpoints figure out their own IP address
 - but we try to switch from relayed to direct traffic as soon as possible
 - to get through firewalls, we use "hole-punching"
+-->
 
-## Hole-punching
+---
+class: diagram
+---
 
-- same diagram as before, with the relay
-- show ADD_ADDRESS frames sent via relay for server side
-- show client accumulating a list of addresses for the server, then hide ADD_ADDRESS frames again
-- show client sending REACH_OUT frames via relay with its own addresses
-- also show client sending PATH_CHALLENGE on non-relay paths
-	- show how this opens the firewall in the cellular tower
-- hide these again, but keep the open firewall info
-- show PATH_CHALLENGE from server (as response to REACH_OUT) opening the router firewall and making it through the cellular tower firewall
-- show the client responding with PATH_CHALLENGE again as well as PATH_RESPONSE
-- then show server responding with PATH_RESPONSE finally
-(don't show actual IP addrs in this diagram, maybe just resort to green and blue color codings for phone/laptop, and use blue-coded circles for IP addrs or just sth like "IP 1" in green/blue and "IP 2" etc.)
+# Hole-punching
 
-Notes:
+<SceneHolePunch />
+
+<!--
 - to ensure both sides know the addresses that should be tried for hole-punching, we share them via the live connection
 - when a connection is established, we immediately send ADD_ADDRESS frames from the server side to the client to inform it about "other addresses" that the server could be reachable under
 	- these frames are QUIC-level control frames that live in a "separate namespace" to application traffic so to say. They're prioritized over all application traffic
@@ -265,68 +350,118 @@ Notes:
 	- simultaneously sends PATH_CHALLENGE frames to the server addresses
 	- this opens firewall ports due to outbound traffic in the cellular tower (so a server can answer)
 - the server recieves the REACH_OUTs via the relay, then ... etc.
+-->
 
-## Paths
+---
+class: diagram
+---
 
-- same diagram as before, but now highlight both "paths"
-	- one over the relay
-	- one direct
-- each path has its own congestion controller, its own RTT estimator
-- show relay being gone, path breaking
-- show another relay coming back online, both peers switching, and the another relay path being established
-- show laptop router NAT being rebound, thus direct path breaking
-- show new path being re-established later
+# Paths
 
-Notes:
+<ScenePaths />
+
+<!--
 - We use QUIC multipath, which means we don't "migrate" between relay and direct, we *keep both alive at the same time*
 - This means each path has its own congestion controller, loss stats and RTT estimator.
 	- instead of this state having to be re-derived every time we need these paths again
 - it means if one path breaks, we can quickly switch to antoher path that's still "warm"
 - e.g. if our relay path breaks, we can detect so early, and dial another relay instead and establish a path in the background while the direct path keeps working normally
 - or if the laptop router's NAT is rebound, we can quickly fall back to the relay, while we coordinate hole-punching another direct path again
+-->
 
-## Paths: more direct
+---
+class: diagram
+---
 
-- same diagram as before, but this time, no relay connectivity
-	- but laptop and phone are under same router
-- exchange information about endpoints via mDNS with the router
-	- -> show a direct connection again
+# Paths: more direct
 
-## Paths: even more direct
+<SceneLan />
 
-- diagram with just phone and laptop
-- show bluetooth connection between them
-	- exchange information about Wifi Direct addresses between them
-- show connection via Wifi Direct being established
-	- Fun fact: Can also need Firewall ports to be opened!
-- Disclaimer: Experimental, not official crates that support this yet, and it needs iroh changes
-- But: Direct bluetooth custom transport exists!
+<!--
+- last variant on the "internet": no WAN at all
+- laptop and phone under the same router, internet is down — or just not needed
+- endpoints announce themselves over mDNS within the LAN
+- -> direct connection through the router, traffic never leaves the local network
+-->
 
-## Cool, what can we do with this?
+---
+class: diagram
+---
 
-- Connect any computers in the world, and maintain connections
+# Paths: even more direct
+
+<SceneWifiDirect />
+
+<!--
+- and finally: no router at all. Just the two devices.
+- over bluetooth they exchange each other's Wi-Fi Direct addresses
+- then a Wi-Fi Direct link is established directly between the two devices
+- fun fact: this can *also* need firewall ports to be opened!
+- disclaimer: experimental — not in the official crates yet, and it needs iroh changes
+- but a direct bluetooth custom transport exists already!
+-->
+
+---
+
+# Cool, what can we do with this?
+
+- Connect any two computers in the world — and *keep* the connections alive
 - Relays are cheap to operate
-	- 95-98% of bytes sent between Endpoints ends up sent directly
+  - 95–98% of bytes between endpoints end up being sent directly
 - Relays are identified by URL
-	- Self-host them
-	- Also: Endpoints can "discover" each other's relay URL and connect to each other
+  - self-host them!
+  - endpoints can even discover each other's relay URL and connect there
 
-## Demo
+<!--
+- so to wrap up the "how":
+	- any two computers, anywhere, connect and stay connected
+	- relays are cheap: just HTTP + websockets forwarding UDP datagrams
+		- and 95-98% of traffic goes direct anyway
+	- relay URLs are just configuration: point at ours or run your own
+	- endpoints can discover each other's relay and use it to connect
+	- and if both are on the same network, it works offline too
+-->
 
-Notes:
+---
+
+# Demo
+
+```
+$ ssh home
+Last login: … from anywhere
+```
+
+<!--
 - Show I've set up "pigeons" on my machine
 - Show `~/.ssh/config`
 - Open zed on my laptop to connect remotely to my home machine
+-->
 
-## Other things
+---
 
+# Other things
+
+- Raspberry Pi camera feed — live at RustConf
+- Mesh-LLM — inference spread across machines
+- A game from `#showcase`, built this year
+
+<!--
 - Images from RustConf this year with raspberry Pi camera feed
 - Show Mesh-LLM project
 - Show recent game posted in `#showcase`
+-->
 
-## Thank you
+---
+
+# Thank you
 
 - Hope you enjoyed this journey through NATs and firewalls
+- We have QUIC at home 🏠
 - See you in discord! `iroh.computer/discord`
-- Go to `iroh.computer` for more info
-- Eager to see what cool stuff you can build with iroh!
+- `iroh.computer` for more info — eager to see what you build with it!
+
+<!--
+- thanks for your attention!
+- iroh.computer/discord if you want to hang out, ask questions, or show off what you built
+- iroh.computer/docs for all of this in written form
+-->
