@@ -142,7 +142,7 @@ let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 
 <v-clicks>
 
-"The cloud" really just means: *a public IP address with an open port*
+"In the cloud" really just means: *at a public IP address with an open port*
 
 What about my own server at home?
 
@@ -183,6 +183,9 @@ $ ip addr show
     inet 192.168.1.101/24 ...
 ```
 
+- that address is not globally unique
+- not actually the address that servers use to talk to my machine on the internet
+
 </v-clicks>
 
 <!--
@@ -216,7 +219,7 @@ $ ip addr show
 
 ---
 
-# NATs: EIM vs. A(P)DM
+# NATs
 
 <SceneNatMapping />
 
@@ -227,6 +230,9 @@ $ ip addr show
 	- EIM: no matter the destination IP address, once a mapping exists for an internal address-and-port, it will be used for incoming traffic.
 	- ADM & APDM: mappings for local addresses exist for each outbound address
 	- (Also called "Full-Cone or symmetric NAT" respectively)
+- What would A(P)DM mean?
+  - Multiple possible "public" socket addresses for our socket!
+  - Harder for the outside to "guess" the port needed to talk to our socket
 -->
 
 ---
@@ -241,6 +247,7 @@ $ ip addr show
 - Filtering could be off
 - or Address-Dependent-Filtering (ADF): 8.8.8.8 can't answer, but another port on 1.1.1.1 can
 - or Address-and-Port-Dependent-Filtering (APDF): neither 8.8.8.8 nor another port on 1.1.1.1 can answer. Only 1.1.1.1:53 can.
+- knowing all of this, how can we make "the dream" work?
 -->
 
 ---

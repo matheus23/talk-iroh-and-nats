@@ -31,16 +31,13 @@ const upLink2 = 'M 344 238 C 420 150, 720 150, 824 204'
       :rows="[{ ext: '203.0.113.20:6543', int: '192.168.1.101:12345' }]"
     />
 
-    <!-- step 1: add a second destination -->
     <g v-click="1">
       <NetServer :x="dns2.x" :y="dns2.y" label="8.8.8.8" ip="DNS" />
       <NetWire :d="upLink2" color="#aab2bd" dash="5 5" />
     </g>
 
-    <!-- step 2: send from the same local port -->
     <g v-click="2">
       <NetWire :d="laptopLink" color="#2563eb" arrow="blue" />
-      <!-- <NetPacket :x="600" :y="152" /> -->
       <NetPacket :x="210" :y="238" />
       <NetFrame
         :x="88" :y="130" :w="222" :h="40" :size="10.5"
@@ -51,7 +48,6 @@ const upLink2 = 'M 344 238 C 420 150, 720 150, 824 204'
       />
     </g>
 
-    <!-- step 3: which external port does it get? -->
     <g v-click="3">
       <NetNatCard
         :x="196" :y="336" :w="272"
@@ -60,6 +56,11 @@ const upLink2 = 'M 344 238 C 420 150, 720 150, 824 204'
           { unknown: '192.168.1.101:12345 → 203.0.113.20:???' },
         ]"
       />
+    </g>
+
+    <g v-click="4">
+      <text y=30>Endpoint-Independent Mapping (EIM): same port</text>
+      <text y=60>Address(-Port)-Dependent Mapping (A(P)DM): different port</text>
     </g>
   </Stage>
 </template>

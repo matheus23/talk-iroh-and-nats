@@ -47,5 +47,13 @@ const upLink2 = 'M 344 238 C 420 150, 720 150, 824 204'
       />
       <text x="392" y="246" style="font-size:18px" font-weight="bold" fill="#d97706">?</text>
     </g>
+
+    <g v-click="2">
+      <text y=30>No Filtering: ✔</text>
+      <text y=60>Address-Dependent Filter (ADF):</text>
+      <text y=80>✗ Any port on 1.1.1.1 can answer</text>
+      <text y=110>Address-Port-Dependent Filter (APDF):</text>
+      <text y=130>✗ Only 1.1.1.1:53 can answer</text>
+    </g>
   </Stage>
 </template>
