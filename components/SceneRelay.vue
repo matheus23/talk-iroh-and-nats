@@ -14,13 +14,12 @@ import { A, W } from './net/geometry'
 
 <template>
   <Stage>
-    <NetZone :x="A.lanZone.x" :y="A.lanZone.y" :w="A.lanZone.w" :h="A.lanZone.h" label="at home" />
-    <NetZone :x="A.goZone.x" :y="A.goZone.y" :w="A.goZone.w" :h="A.goZone.h" label="out and about" />
+    <NetZone :x="A.lanZone.x" :y="A.lanZone.y" :w="A.lanZone.w" :h="A.lanZone.h" />
 
     <NetLaptop :x="A.laptop.x" :y="A.laptop.y" label="192.168.1.101" />
     <NetRouter :x="A.router.x" :y="A.router.y" label="203.0.113.20" />
     <NetTower :x="A.tower.x" :y="A.tower.y" :arcs="3" arc-color="#16a34a" label="cell tower" />
-    <NetPhone :x="A.phoneCell.x" :y="A.phoneCell.y" color="#16a34a" label="phone" label-color="#15803d" />
+    <NetPhone :x="A.phoneCell.x" :y="A.phoneCell.y" color="#16a34a" label-color="#15803d" />
     <NetWire :d="W.laptopLink" color="#aab2bd" />
     <NetWire :d="W.cellLink" color="#16a34a" />
 
@@ -29,8 +28,8 @@ import { A, W } from './net/geometry'
       <NetRelay :x="A.relay.x" :y="A.relay.y" />
       <NetWire :d="W.upLink" color="#aab2bd" dash="5 5" />
       <NetWire :d="W.downLink" color="#aab2bd" dash="5 5" />
-      <text x="452" y="100" text-anchor="middle" style="font-size:10.5px" fill="#888">
-        https + websockets — reachable from nearly anywhere
+      <text x="452" y="24" text-anchor="middle" style="font-size:10.5px" fill="#888">
+        wss://euc1-1.relay.n0.iroh.link/relay
       </text>
     </g>
 
@@ -39,12 +38,6 @@ import { A, W } from './net/geometry'
       <NetWire :d="W.upLink" color="#2563eb" width="2" />
       <NetWire :d="W.downLink" color="#2563eb" width="2" />
       <NetWire :d="W.laptopLink" color="#2563eb" width="2" />
-      <NetPacket :x="308" :y="176" />
-      <NetPacket :x="612" :y="140" />
-      <NetFrame
-        :x="330" :y="398" :w="290" :h="34" :size="11"
-        :lines="[{ frame: 'relayed QUIC', value: 'still end-to-end encrypted' }]"
-      />
     </g>
   </Stage>
 </template>
