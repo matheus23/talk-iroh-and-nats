@@ -71,9 +71,9 @@ let (mut recv, mut send) = connection.into_split();
 
 # Computers talking to each other?
 
-<v-clicks>
-
 Roaming mitigations:
+
+<v-clicks>
 
 - Redialing:
   - Costs more handshakes
@@ -110,7 +110,7 @@ Roaming mitigations:
 
 <v-clicks>
 
-- Started out as "SPDY" at Google
+- Started out as "gQUIC" at Google
 - Standardized as "QUIC" by the IETF in RFC 9000
 - Built on UDP
 
@@ -148,6 +148,8 @@ let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 "In the cloud" really just means: *at a public IP address with an open port*
 
 What about my own server at home?
+
+<div class="centered-image">
 
 ![Image of Framework Desktop](./fw.jpg)
 
