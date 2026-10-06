@@ -43,12 +43,6 @@ const props = withDefaults(defineProps<{
       fill="none" :stroke="color" stroke-width="1"
     />
 
-    <!-- iroh badge -->
-    <g v-if="badge">
-      <rect x="-14" y="24" width="28" height="16" rx="3" fill="#eee" stroke="#d97706" stroke-width="1.5" />
-      <text x="0" y="36" text-anchor="middle" font-family="'Space Mono', monospace" style="font-size:8px" fill="#d97706">iroh</text>
-    </g>
-
     <!-- public key chip + truncated id -->
     <g v-if="keyId">
       <path

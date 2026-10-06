@@ -31,6 +31,7 @@ How did that go?
 use tokio::net::TcpStream;
 
 let connection = TcpStream::connect("<IP address>:<port>").await?;
+let (mut recv, mut send) = connection.into_split();
 ```
 
 - yay streaming!
@@ -52,8 +53,6 @@ let connection = TcpStream::connect("<IP address>:<port>").await?;
 -->
 
 ---
-class: diagram
----
 
 # Computers talking to each other?
 
@@ -70,15 +69,24 @@ class: diagram
 
 ---
 
-# Keeping connections alive
+# Computers talking to each other?
 
-- **Re-dial after you move**
-  notice the move → new TCP handshake → probably a new encryption handshake too
-  <span class="mono-dim">1–3 s hiccup — and which data even got through?</span>
+<v-clicks>
 
-- **Or drop down to raw UDP**
-  no more reliability, deduplication, congestion control
-  <span class="mono-dim">(congestion control is famously its own research field)</span>
+Roaming mitigations:
+
+- Redialing:
+  - Costs more handshakes
+  - Most importantly: Which data was lost?
+
+<v-click>
+
+- Drop down to UDP:
+  - loose reliability, deduplication, congestion control, etc.
+
+</v-click>
+
+</v-clicks>
 
 <!--
 - We could re-dial another TCP connection on the phone, once we realize we moved
@@ -100,14 +108,23 @@ class: diagram
 
 # Better: adopt QUIC!
 
-Built on UDP — Google did the work once (SPDY), the IETF standardized it as **QUIC**
+<v-clicks>
+
+- Started out as "SPDY" at Google
+- Standardized as "QUIC" by the IETF in RFC 9000
+- Built on UDP
 
 ```rust
-let connection = endpoint.connect(addr, "my-alpn").await?;
+let connection = endpoint.connect(addr, "example.com").await?;
 let (mut send, mut recv) = connection.open_bi().await?; // as many as you want
 ```
 
-Streams, reliability, congestion control, encryption — and datagrams are identified by a **connection ID**
+- retransmission & congestion control
+- many streams (no head of line blocking!)
+- encryption
+- connection migration(!)
+
+</v-clicks>
 
 <!--
 - Don't reinvent the wheel - once upon a time Google already did the work of building upon UDP, back then they called it "SPDY" ("speedy")
@@ -123,9 +140,19 @@ Streams, reliability, congestion control, encryption — and datagrams are ident
 
 # Can we talk to *any* computer?
 
-“The cloud” really just means: *a public IP address with an open port*
+<v-clicks>
 
-What about my own server — at home?
+"The cloud" really just means: *a public IP address with an open port*
+
+What about my own server at home?
+
+<div class="fw-desktop-image">
+
+![Image of Framework Desktop](./fw.jpg)
+
+</div>
+
+</v-clicks>
 
 <!--
 - Until now we've run our server "in the cloud"
@@ -142,17 +169,21 @@ What about my own server — at home?
 
 ---
 
-# Global addressing?
+# Can we talk to *any* computer: Addressing
+
+<v-clicks>
 
 ```rust
-let endpoint = Endpoint::bind("0.0.0.0:0")?; // any interface, any port
-endpoint.local_addr()?;                       // 0.0.0.0:12345 — nice, but…
+let endpoint = Endpoint::bind("0.0.0.0:0")?;
+endpoint.local_addr()?; // uuh 0.0.0.0:12345
 ```
 
 ```bash
 $ ip addr show
-    inet 192.168.1.101/24 ... # the Wifi one. global? no.
+    inet 192.168.1.101/24 ...
 ```
+
+</v-clicks>
 
 <!--
 - When we ran our server at home, which address did we use?
@@ -163,8 +194,6 @@ $ ip addr show
 	- But it's not the global address!
 -->
 
----
-class: diagram
 ---
 
 # NATs
@@ -186,8 +215,6 @@ class: diagram
 -->
 
 ---
-class: diagram
----
 
 # NATs — it depends
 
@@ -202,8 +229,6 @@ class: diagram
 	- (Also called "Full-Cone or symmetric NAT" respectively)
 -->
 
----
-class: diagram
 ---
 
 # Firewalls
@@ -235,8 +260,6 @@ But two questions remain:
 - So it's `Endpoint::connect`
 -->
 
----
-class: diagram
 ---
 
 # Identifying another device
@@ -287,8 +310,6 @@ class: diagram
 -->
 
 ---
-class: diagram
----
 
 # Still need to deal with firewalls
 
@@ -303,8 +324,6 @@ class: diagram
 - so: candidate addresses alone get us nowhere. We need help.
 -->
 
----
-class: diagram
 ---
 
 # Relays!
@@ -321,8 +340,6 @@ class: diagram
 - to get through firewalls, we use "hole-punching"
 -->
 
----
-class: diagram
 ---
 
 # Hole-punching
@@ -341,8 +358,6 @@ class: diagram
 -->
 
 ---
-class: diagram
----
 
 # Paths
 
@@ -358,8 +373,6 @@ class: diagram
 -->
 
 ---
-class: diagram
----
 
 # Paths: more direct
 
@@ -372,8 +385,6 @@ class: diagram
 - -> direct connection through the router, traffic never leaves the local network
 -->
 
----
-class: diagram
 ---
 
 # Paths: even more direct

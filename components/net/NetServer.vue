@@ -13,7 +13,6 @@ const props = withDefaults(defineProps<{
   x: 0,
   y: 0,
   s: 1,
-  label: 'server',
   ip: '',
   color: '#888',
   opacity: 1,

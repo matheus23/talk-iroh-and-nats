@@ -13,7 +13,7 @@ withDefaults(defineProps<{
   x: 0,
   y: 0,
   w: 260,
-  title: 'router · NAT mapping',
+  title: 'NAT table',
   rows: () => [],
 })
 

@@ -20,30 +20,26 @@ const viaTower = 'M 702 244 C 702 160, 780 110, 826 92'
 
 <template>
   <Stage>
-    <NetZone :x="A.lanZone.x" :y="A.lanZone.y" :w="A.lanZone.w" :h="A.lanZone.h" label="at home" />
-    <NetZone :x="A.goZone.x" :y="A.goZone.y" :w="A.goZone.w" :h="A.goZone.h" label="out and about" />
+    <NetZone :x="A.lanZone.x" :y="A.lanZone.y" :w="A.lanZone.w" :h="A.lanZone.h" label="home network" />
+    <!-- <NetZone :x="A.goZone.x" :y="A.goZone.y" :w="A.goZone.w" :h="A.goZone.h" /> -->
 
-    <!-- cast: always present -->
-    <NetServer :x="A.server.x" :y="A.server.y" label="another computer" />
-    <NetRouter :x="A.router.x" :y="A.router.y" label="router" />
-    <NetTower :x="A.tower.x" :y="A.tower.y" :arc-color="'#b4bac4'" label="cell tower" />
+    <NetServer :x="A.server.x" :y="A.server.y" />
+    <NetRouter :x="A.router.x" :y="A.router.y" label="home router" />
 
-    <!-- phone at home — leaves at step 2 -->
     <g v-click.hide="2">
-      <NetPhone :x="A.phoneHome.x" :y="A.phoneHome.y" color="#16a34a" label="phone" label-color="#15803d" />
+      <NetPhone :x="A.phoneHome.x" :y="A.phoneHome.y" color="#16a34a" label-color="#15803d" />
     </g>
 
     <!-- step 1: the connection (fades at step 3, replaced by the broken view) -->
     <g v-click="[1, 3]">
       <NetWire :d="wifiHome" color="#2563eb" />
       <NetWire :d="viaRouter" color="#2563eb" />
-      <NetPacket :x="540" :y="128" />
-      <text x="216" y="222" style="font-size:10.5px" fill="#888">wifi</text>
     </g>
 
     <!-- step 2: phone moved out, attaches to the tower -->
     <g v-click="2">
-      <NetPhone :x="A.phoneCell.x" :y="A.phoneCell.y" color="#16a34a" label="phone" label-color="#15803d" moved />
+      <NetTower :x="A.tower.x" :y="A.tower.y" :arc-color="'#b4bac4'" />
+      <NetPhone :x="A.phoneCell.x" :y="A.phoneCell.y" color="#16a34a" label-color="#15803d" />
       <NetWire :d="cellLink" color="#16a34a" />
       <NetTower :x="A.tower.x" :y="A.tower.y" :arcs="3" arc-color="#16a34a" />
       <NetWire :d="viaTower" color="#aab2bd" dash="5 5" />
@@ -56,12 +52,8 @@ const viaTower = 'M 702 244 C 702 160, 780 110, 826 92'
         <NetWire :d="viaRouter" color="#aab2bd" />
       </g>
       <NetX :x="520" :y="180" :size="7" label="connection lost" />
-      <NetFrame
-        :x="322" :y="300" :w="316" :h="34"
-        :lines="[{ frame: 'four-tuple', value: '(ip:port ↔ ip:port)' }]"
-      />
-      <text x="480" y="352" text-anchor="middle" style="font-size:10.5px" fill="#888">
-        that is what a TCP connection is identified by
+      <text :x="A.server.x" y="50" text-anchor="end" >
+        (home IP:port, server IP:port)
       </text>
     </g>
   </Stage>

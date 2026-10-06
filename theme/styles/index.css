@@ -93,6 +93,7 @@ body {
   border: 1px solid var(--hairline);
   border-radius: 0.25rem;
   color: #4338ca;
+  line-height: 1.6;
 }
 
 .slidev-layout pre {
@@ -118,6 +119,16 @@ body {
   font-size: 0.78rem;
   color: var(--faint);
   margin-top: 0.25rem;
+}
+
+.fw-desktop-image {
+    display: flex;
+    width: 100%;
+
+    & p {
+        width: 400px;
+        margin: auto;
+    }
 }
 
 /* ---------- diagram slides ---------- */

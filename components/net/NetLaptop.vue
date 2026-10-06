@@ -31,11 +31,6 @@ const props = withDefaults(defineProps<{
     <rect x="-38" y="0" width="76" height="50" rx="4" fill="#eee" stroke="#888" stroke-width="1.5" />
     <rect x="-34" y="4" width="68" height="42" rx="3" fill="#eee" :stroke="color" stroke-width="1" />
 
-    <!-- iroh badge -->
-    <g v-if="badge">
-      <rect x="-13" y="12" width="26" height="14" rx="3" fill="#eee" stroke="#d97706" stroke-width="1.3" />
-      <text x="0" y="22" text-anchor="middle" font-family="'Space Mono', monospace" style="font-size:7.5px" fill="#d97706">iroh</text>
-    </g>
 
     <!-- public key chip + truncated id -->
     <g v-if="keyId">
